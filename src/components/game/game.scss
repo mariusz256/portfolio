@@ -1,0 +1,11 @@
+.game {
+  width: 100%;
+  margin-bottom: 3rem;
+  display: flex;
+  justify-content: center;
+
+  &__board {
+    width: 100%;
+    aspect-ratio: 16/9;
+  }
+}
