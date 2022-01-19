@@ -1,21 +1,62 @@
 import "./game.scss";
 import React, { useRef, useState, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import * as THREE from "three";
+import Circle from "./circle";
+import Cross from "./cross";
 
 function Game() {
   const [player, setPlayer] = useState("circle");
-  const [move, setMove] = useState(new Array(9));
+  const [board, setBoard] = useState(new Array(9));
+  const [won, setWon] = useState(false);
+  const [draw, setDraw] = useState(false);
 
-  const renderPlayer = (e) => {
+  const WIN_COMBINATIONS = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+
+  const CIRCLE = "circle";
+  const CROSS = "cross";
+
+  const chceckWin = (player) => {
+    const playerMove = board
+      .filter((el) => el.player === player)
+      .map((el) => el.boardID);
+
+    const won = WIN_COMBINATIONS.filter((el) =>
+      el.every((i) => playerMove.includes(i))
+    );
+
+    setWon(() => (won.length > 0 ? player : false));
+  };
+
+  const updateBoard = (e) => {
+    if (e.object.player || won || draw) return;
     e.object.player = player;
-    setMove((prev) => {
-      prev[e.object.boardID] = e.object.player;
+    setBoard((prev) => {
+      prev[e.object.boardID] = e.object;
       return prev;
     });
-    setPlayer((prev) => (prev === "circle" ? "cross" : "circle"));
+
+    console.log(chceckWin(player));
+    setPlayer((prev) => (prev === CIRCLE ? CROSS : CIRCLE));
   };
-  console.log(move);
+
+  const renderPlayer = () => {
+    return board.map((el, i) => {
+      const { x, y, z } = el.position;
+      if (el.player === CIRCLE)
+        return <Circle key={i} position={[x, y, z + 1]} />;
+      if (el.player === CROSS)
+        return <Cross key={i} position={[x, y, z + 1]} />;
+    });
+  };
 
   const createBoard = () => {
     const board = [];
@@ -32,7 +73,7 @@ function Game() {
         <mesh
           key={i}
           userData={{ player: "" }}
-          onClick={renderPlayer}
+          onClick={updateBoard}
           position={position}
           name={i}
           player=""
@@ -46,6 +87,8 @@ function Game() {
     return board;
   };
 
+  console.log(won);
+
   return (
     <div className="game">
       <div className="game__board">
@@ -53,6 +96,7 @@ function Game() {
           {/* <ambientLight /> */}
           <pointLight position={(10, 10, 10)} />
           {createBoard()}
+          {renderPlayer()}
         </Canvas>
       </div>
     </div>
