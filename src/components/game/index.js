@@ -1,6 +1,6 @@
 import "./game.scss";
-import React, { useRef, useState, useEffect } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import React, { useState } from "react";
+import { Canvas } from "@react-three/fiber";
 import Circle from "./circle";
 import Cross from "./cross";
 
@@ -55,6 +55,7 @@ function Game() {
         return <Circle key={i} position={[x, y, z + 1]} />;
       if (el.player === CROSS)
         return <Cross key={i} position={[x, y, z + 1]} />;
+      return null;
     });
   };
 
