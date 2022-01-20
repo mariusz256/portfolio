@@ -1,23 +1,30 @@
 import "./game.scss";
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useState, useEffect, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import Circle from "./circle";
 import Cross from "./cross";
 import Button from "./Button";
+import {
+  EffectComposer,
+  Bloom,
+  SelectiveBloom,
+} from "@react-three/postprocessing";
 
 function Game() {
   const [player, setPlayer] = useState("circle");
   const [board, setBoard] = useState(new Array(9));
   const [won, setWon] = useState(false);
   const [draw, setDraw] = useState(false);
+  const [hovered, setHover] = useState(true);
 
+  const lightRef = useRef();
+  const meshRefs = useRef([]);
+  meshRefs.current = [];
   //text in three https://codesandbox.io/s/circling-birds-forked-p1wcg?file=/src/App.js
 
   // useEffect(() => {
-  //   document.body.style.cursor = hovered
-  //     ? 'pointer'
-  //     : "url('https://raw.githubusercontent.com/chenglou/react-motion/master/demos/demo8-draggable-list/cursor.png') 39 39, auto"
-  // }, [hovered])
+  //   document.body.style.cursor = hovered ? "pointer" : "auto";
+  // }, [hovered]);
 
   const WIN_COMBINATIONS = [
     [0, 1, 2],
@@ -33,6 +40,13 @@ function Game() {
   const CIRCLE = "circle";
   const CROSS = "cross";
 
+  const addToMeshRefs = (el) => {
+    if (el && !meshRefs.current.includes) {
+      meshRefs.current.push(el);
+    }
+    console.log(meshRefs.current);
+  };
+
   const chceckWin = (player) => {
     const playerMove = board
       .filter((el) => el.player === player)
@@ -45,7 +59,11 @@ function Game() {
     setWon(() => (won.length > 0 ? player : false));
   };
 
+  const checkDraw = () => {};
+
   const updateBoard = (e) => {
+    console.log(e.object.position);
+
     if (e.object.player || won || draw) return;
     e.object.player = player;
     setBoard((prev) => {
@@ -81,10 +99,13 @@ function Game() {
       }
       board.push(
         <mesh
+          ref={addToMeshRefs}
           key={i}
           userData={{ player: "" }}
           onClick={updateBoard}
           position={position}
+          onPointerOver={() => setHover(true)}
+          onPointerOut={() => setHover(false)}
           name={i}
           player=""
           boardID={i}
@@ -104,17 +125,28 @@ function Game() {
       <div className="game__board">
         <Canvas camera={{ fov: 110, position: [0, 0, 10] }}>
           {/* <ambientLight /> */}
-          <pointLight position={(10, 10, 10)} />
+          <pointLight ref={lightRef} position={(10, 10, 10)} />
           {createBoard()}
           {renderPlayer()}
           <Suspense fallback={null}>
-            <Button
+            {/* <Button
               onClick={() => console.log("click reset")}
-              position={[-5, -10, 0]}
-              color="green"
+              position={[0.5, -0.5, 0]}
             >
               RESET
-            </Button>
+            </Button> */}
+
+            {/* {hovered && (
+              <EffectComposer multisampling={8}>
+                <SelectiveBloom
+                  lights={[lightRef]}
+                  selection={meshRefs}
+                  kernelSize={3}
+                  luminanceThreshold={0}
+                  intensity={0.6}
+                />
+              </EffectComposer>
+            )} */}
           </Suspense>
         </Canvas>
       </div>

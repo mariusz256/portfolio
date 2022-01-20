@@ -1,5 +1,5 @@
 import "./App.scss";
-import Game from "../components/game";
+import Game from "../components/tictactoe";
 import React from "react";
 function App() {
   return (
