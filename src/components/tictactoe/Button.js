@@ -17,6 +17,7 @@ function Button({
   position,
   color = "#ba8c63",
   size = 1.5,
+  lightRef,
   ...props
 }) {
   const [hovered, setHover] = useState(false);
@@ -63,18 +64,13 @@ function Button({
 
       {hovered && (
         <EffectComposer multisampling={8}>
-          <Bloom
-            kernelSize={3}
-            luminanceThreshold={0}
-            luminanceSmoothing={0.5}
-            intensity={0.6}
-          />
-          {/* <Bloom
+          <SelectiveBloom
+            lights={[lightRef]}
+            selection={textMesh}
             kernelSize={1}
             luminanceThreshold={0}
-            luminanceSmoothing={0}
             intensity={0.5}
-          /> */}
+          />
         </EffectComposer>
       )}
     </group>

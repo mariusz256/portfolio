@@ -18,8 +18,8 @@ function Game() {
   const [hovered, setHover] = useState(true);
 
   const lightRef = useRef();
-  const meshRefs = useRef([]);
-  meshRefs.current = [];
+  const meshRefs = new Array(9).fill(useRef(), 0, 9);
+
   //text in three https://codesandbox.io/s/circling-birds-forked-p1wcg?file=/src/App.js
 
   // useEffect(() => {
@@ -39,13 +39,6 @@ function Game() {
 
   const CIRCLE = "circle";
   const CROSS = "cross";
-
-  const addToMeshRefs = (el) => {
-    if (el && !meshRefs.current.includes) {
-      meshRefs.current.push(el);
-    }
-    console.log(meshRefs.current);
-  };
 
   const chceckWin = (player) => {
     const playerMove = board
@@ -99,13 +92,11 @@ function Game() {
       }
       board.push(
         <mesh
-          ref={addToMeshRefs}
+          ref={meshRefs[i]}
           key={i}
           userData={{ player: "" }}
           onClick={updateBoard}
           position={position}
-          onPointerOver={() => setHover(true)}
-          onPointerOut={() => setHover(false)}
           name={i}
           player=""
           boardID={i}
@@ -129,24 +120,15 @@ function Game() {
           {createBoard()}
           {renderPlayer()}
           <Suspense fallback={null}>
-            {/* <Button
-              onClick={() => console.log("click reset")}
-              position={[0.5, -0.5, 0]}
-            >
-              RESET
-            </Button> */}
-
-            {/* {hovered && (
-              <EffectComposer multisampling={8}>
-                <SelectiveBloom
-                  lights={[lightRef]}
-                  selection={meshRefs}
-                  kernelSize={3}
-                  luminanceThreshold={0}
-                  intensity={0.6}
-                />
-              </EffectComposer>
-            )} */}
+            {(won || draw) && (
+              <Button
+                lightRef={lightRef}
+                onClick={() => console.log("click reset")}
+                position={[0.5, -0.5, 0]}
+              >
+                RESET
+              </Button>
+            )}
           </Suspense>
         </Canvas>
       </div>
