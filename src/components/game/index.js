@@ -1,14 +1,23 @@
 import "./game.scss";
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import Circle from "./circle";
 import Cross from "./cross";
+import Button from "./Button";
 
 function Game() {
   const [player, setPlayer] = useState("circle");
   const [board, setBoard] = useState(new Array(9));
   const [won, setWon] = useState(false);
   const [draw, setDraw] = useState(false);
+
+  //text in three https://codesandbox.io/s/circling-birds-forked-p1wcg?file=/src/App.js
+
+  // useEffect(() => {
+  //   document.body.style.cursor = hovered
+  //     ? 'pointer'
+  //     : "url('https://raw.githubusercontent.com/chenglou/react-motion/master/demos/demo8-draggable-list/cursor.png') 39 39, auto"
+  // }, [hovered])
 
   const WIN_COMBINATIONS = [
     [0, 1, 2],
@@ -98,6 +107,15 @@ function Game() {
           <pointLight position={(10, 10, 10)} />
           {createBoard()}
           {renderPlayer()}
+          <Suspense fallback={null}>
+            <Button
+              onClick={() => console.log("click reset")}
+              position={[-5, -10, 0]}
+              color="green"
+            >
+              RESET
+            </Button>
+          </Suspense>
         </Canvas>
       </div>
     </div>
