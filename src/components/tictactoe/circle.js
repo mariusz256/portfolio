@@ -1,9 +1,18 @@
 import React from "react";
+import { useBox } from "@react-three/cannon";
 
 function Circle(props) {
+  const [x, y, z] = props.position;
+
+  const [ref] = useBox(() => ({
+    args: [4, 4, 4],
+    mass: 1,
+    position: [x, y, z],
+    rotation: [0.3 * Math.random(), 0, 0.1 * Math.random()],
+  }));
   return (
-    <mesh {...props}>
-      <torusGeometry args={[1.5, 0.35, 32, 300]} />
+    <mesh ref={ref} {...props}>
+      <boxBufferGeometry args={[4, 4, 4]} />
       <meshStandardMaterial color="yellow" />
     </mesh>
   );

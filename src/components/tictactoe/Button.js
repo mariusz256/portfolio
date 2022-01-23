@@ -9,6 +9,7 @@ import {
   Bloom,
   SelectiveBloom,
 } from "@react-three/postprocessing";
+import { useBox } from "@react-three/cannon";
 
 extend({ TextGeometry });
 
@@ -18,9 +19,20 @@ function Button({
   color = "#ba8c63",
   size = 1.5,
   lightRef,
+  onClick,
+  won,
+  draw,
   ...props
 }) {
-  const [hovered, setHover] = useState(false);
+  // const [hovered, setHover] = useState(false);
+
+  const [ref] = useBox(() => ({
+    args: [8, 8, 8],
+
+    mass: 6,
+    position: position,
+    rotation: [0.3 * Math.random() - Math.PI / 2, 0, 0.1 * Math.random()],
+  }));
 
   const font = useLoader(FontLoader, boldUrl);
   const config = {
@@ -49,9 +61,10 @@ function Button({
 
   return (
     <group
-      position={position}
-      onPointerOver={() => setHover(true)}
-      onPointerOut={() => setHover(false)}
+      ref={ref}
+      // onPointerOver={() => setHover(true)}
+      // onPointerOut={() => setHover(false)}
+      onClick={onClick}
     >
       <mesh ref={textMesh}>
         <textGeometry args={[children, config]} />
@@ -61,18 +74,6 @@ function Button({
         <boxGeometry args={[5, 2, 1]} />
         <meshStandardMaterial transparent opacity={0} />
       </mesh>
-
-      {hovered && (
-        <EffectComposer multisampling={8}>
-          <SelectiveBloom
-            lights={[lightRef]}
-            selection={textMesh}
-            kernelSize={1}
-            luminanceThreshold={0}
-            intensity={0.5}
-          />
-        </EffectComposer>
-      )}
     </group>
   );
 }
