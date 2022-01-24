@@ -20,6 +20,7 @@ function Game() {
   const [board, setBoard] = useState(new Array(9));
   const [won, setWon] = useState(false);
   const [draw, setDraw] = useState(false);
+  const [startReset, setReset] = useState(false);
   // const [hovered, setHover] = useState(true);
 
   // const [ref, api] = useBox(() => ({ mass: 1 }));
@@ -71,7 +72,7 @@ function Game() {
     console.log(e.object.boardID);
     console.log(board);
 
-    if (board[e.object.boardID] || won || draw) return;
+    if (board[e.object.boardID] || won || draw || startReset) return;
     e.object.player = player;
     setBoard((prev) => {
       prev[e.object.boardID] = e.object;
@@ -105,13 +106,21 @@ function Game() {
           />
           <pointLight ref={lightRef} position={(10, 10, 10)} />
           <Physics gravity={[0, -50, 0]}>
-            <Board onClick={updateBoard} />
+            <Board
+              onClick={updateBoard}
+              reset={startReset}
+              setReset={setReset}
+              clearBoard={reset}
+            />
             {renderPlayer()}
             <Suspense fallback={null}>
               {(won || draw) && (
                 <Button
                   lightRef={lightRef}
-                  onClick={reset}
+                  onClick={() => {
+                    // reset();
+                    setReset(true);
+                  }}
                   position={[0, 25, 0]}
                   won={won}
                   draw={draw}

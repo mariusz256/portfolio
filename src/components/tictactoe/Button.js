@@ -27,7 +27,7 @@ function Button({
   // const [hovered, setHover] = useState(false);
 
   const [ref] = useBox(() => ({
-    args: [8, 8, 8],
+    args: [5, 2, 0.5],
 
     mass: 6,
     position: position,

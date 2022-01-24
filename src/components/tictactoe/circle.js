@@ -8,7 +8,7 @@ function Circle(props) {
     args: [4, 4, 4],
     mass: 1,
     position: [x, y, z],
-    rotation: [0.3 * Math.random(), 0, 0.1 * Math.random()],
+    rotation: [0.2 * Math.random(), 0, 0.1 * Math.random()],
   }));
   return (
     <mesh ref={ref} {...props}>
