@@ -6,15 +6,15 @@ function Cross(props) {
 
   const [ref] = useBox(() => ({
     args: [4, 4, 4],
-
+    castShadow: true,
     mass: 1,
     position: [x, y, z],
     rotation: [0.3 * Math.random(), 0, 0.1 * Math.random()],
   }));
   return (
-    <mesh ref={ref} {...props}>
+    <mesh castShadow ref={ref} {...props}>
       <boxBufferGeometry args={[4, 4, 4]} />
-      <meshStandardMaterial color="green" />
+      <meshLambertMaterial color="green" />
     </mesh>
   );
 }

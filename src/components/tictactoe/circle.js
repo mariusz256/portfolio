@@ -11,9 +11,9 @@ function Circle(props) {
     rotation: [0.2 * Math.random(), 0, 0.1 * Math.random()],
   }));
   return (
-    <mesh ref={ref} {...props}>
+    <mesh castShadow ref={ref} {...props}>
       <boxBufferGeometry args={[4, 4, 4]} />
-      <meshStandardMaterial color="yellow" />
+      <meshLambertMaterial color="yellow" />
     </mesh>
   );
 }

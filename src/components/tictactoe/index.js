@@ -14,6 +14,7 @@ import { Physics, useBox } from "@react-three/cannon";
 import Field from "./Board";
 import { OrbitControls } from "@react-three/drei";
 import Board from "./Board";
+import Plane from "./Plane";
 
 function Game() {
   const [player, setPlayer] = useState("circle");
@@ -69,8 +70,8 @@ function Game() {
   };
 
   const updateBoard = (e) => {
-    console.log(e.object.boardID);
-    console.log(board);
+    // console.log(e.object.boardID);
+    // console.log(board);
 
     if (board[e.object.boardID] || won || draw || startReset) return;
     e.object.player = player;
@@ -98,9 +99,9 @@ function Game() {
   return (
     <div className="game">
       <div className="game__board">
-        <Canvas camera={{ fov: 110, position: [0, 20, 5] }}>
+        <Canvas camera={{ fov: 110, position: [0, 30, 5] }}>
           <OrbitControls
-            enablePan={true}
+            enablePan={false}
             enableZoom={true}
             enableRotate={true}
           />
@@ -113,15 +114,16 @@ function Game() {
               clearBoard={reset}
             />
             {renderPlayer()}
+            <Plane position={[0, -10, 0]} />
             <Suspense fallback={null}>
               {(won || draw) && (
                 <Button
                   lightRef={lightRef}
                   onClick={() => {
-                    // reset();
-                    setReset(true);
+                    setReset(!startReset);
+                    console.log(startReset);
                   }}
-                  position={[0, 25, 0]}
+                  position={[0, 25, -2.5]}
                   won={won}
                   draw={draw}
                 >

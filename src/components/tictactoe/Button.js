@@ -27,9 +27,9 @@ function Button({
   // const [hovered, setHover] = useState(false);
 
   const [ref] = useBox(() => ({
-    args: [5, 2, 0.5],
+    args: [5, 2, 1],
 
-    mass: 6,
+    mass: 16,
     position: position,
     rotation: [0.3 * Math.random() - Math.PI / 2, 0, 0.1 * Math.random()],
   }));
@@ -60,17 +60,12 @@ function Button({
   }, []);
 
   return (
-    <group
-      ref={ref}
-      // onPointerOver={() => setHover(true)}
-      // onPointerOut={() => setHover(false)}
-      onClick={onClick}
-    >
-      <mesh ref={textMesh}>
+    <group ref={ref}>
+      <mesh ref={textMesh} args={[5, 2, 1]}>
         <textGeometry args={[children, config]} />
         <meshStandardMaterial color={color} />
       </mesh>
-      <mesh ref={boxMesh}>
+      <mesh ref={boxMesh} onClick={onClick}>
         <boxGeometry args={[5, 2, 1]} />
         <meshStandardMaterial transparent opacity={0} />
       </mesh>
