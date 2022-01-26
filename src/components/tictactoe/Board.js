@@ -1,55 +1,116 @@
-import React, { useRef, useState } from "react";
-import { useBox, usePlane } from "@react-three/cannon";
+import React, { forwardRef, useRef, useState } from "react";
+import { useBox, useCompoundBody, usePlane } from "@react-three/cannon";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
-function Field({ onClick, position, name, player, id }) {
-  return (
-    <mesh
-      rotation={[-Math.PI / 2, 0, 0]}
-      receiveShadow
-      onClick={onClick}
-      position={position}
-      name={name}
-      player={player}
-      boardID={id}
-    >
-      <boxGeometry args={[5, 5, 1]} />
-      <meshStandardMaterial color="#b20072" />
-    </mesh>
-  );
-}
+const Block = forwardRef(
+  (
+    {
+      children,
+      transparent = false,
+      opacity = 1,
+      color = "white",
+      args = [1, 1, 1],
+      // onClick,
+      // name,
+      // player,
+      id,
+      ...props
+    },
+    ref
+  ) => {
+    return (
+      <mesh
+        ref={ref}
+        // rotation={rotation}
+        receiveShadow
+        // onClick={onClick}
+        // name={name}
+        // player={player}
+        boardID={id}
+        {...props}
+      >
+        <boxGeometry args={args} />
+        <meshStandardMaterial color={color} />
+      </mesh>
+    );
+  }
+);
 
-function Wall({ position }) {
-  const args = [19, 5, 1];
-  const [ref] = useBox(() => ({ args: args, position: position }));
-
-  return (
-    <mesh ref={ref} position={position}>
-      <boxGeometry args={args} />
-      <meshStandardMaterial color="black" />
-    </mesh>
-  );
-}
-
-function SmallWall({ position }) {
-  const args = [1, 5, 5];
-  const [ref] = useBox(() => ({ args: args, position: position }));
-  return (
-    <mesh ref={ref} position={position}>
-      <boxGeometry args={args} />
-      <meshStandardMaterial color="black" />
-    </mesh>
-  );
-}
-
-function Board({ onClick, reset, setReset, clearBoard }) {
+function Board({ onClick, reset, setReset, clearBoard, ...props }) {
   const [rotation, setRotation] = useState(0);
-  const [position, setPosition] = useState(0);
-  const [boardRef, api] = useBox(() => {
+  // const [position, setPosition] = useState(0);
+  const [boardRef, api] = useCompoundBody(() => {
     return {
-      type: "Dynamic",
-      args: [18, 1, 18],
+      // type: "Box",
+      shapes: [
+        { type: "Box", position: [0, 2, -9], args: [19, 5, 1] },
+        { type: "Box", position: [9, 2, -6], args: [1, 5, 5] },
+        { type: "Box", position: [9, 2, 0], args: [1, 5, 5] },
+        { type: "Box", position: [9, 2, 6], args: [1, 5, 5] },
+        {
+          type: "Box",
+          position: [-6, 0, 6],
+          args: [5, 1, 5],
+        },
+        {
+          type: "Box",
+          position: [0, 0, 6],
+          args: [5, 1, 5],
+        },
+        {
+          type: "Box",
+          position: [6, 0, 6],
+          args: [5, 1, 5],
+        },
+        { type: "Box", position: [0, 2, -3], args: [19, 5, 1] },
+        { type: "Box", position: [3, 2, -6], args: [1, 5, 5] },
+        { type: "Box", position: [3, 2, 0], args: [1, 5, 5] },
+        { type: "Box", position: [3, 2, 6], args: [1, 5, 5] },
+
+        {
+          type: "Box",
+          position: [-6, 0, 0],
+          args: [5, 1, 5],
+        },
+        {
+          type: "Box",
+          position: [0, 0, 0],
+          args: [5, 1, 5],
+        },
+        {
+          type: "Box",
+          position: [6, 0, 0],
+          args: [5, 1, 5],
+        },
+
+        { type: "Box", position: [0, 2, 3], args: [19, 5, 1] },
+        { type: "Box", position: [-3, 2, -6], args: [1, 5, 5] },
+        { type: "Box", position: [-3, 2, 0], args: [1, 5, 5] },
+        { type: "Box", position: [-3, 2, 6], args: [1, 5, 5] },
+
+        {
+          type: "Box",
+          position: [-6, 0, -6],
+          args: [5, 1, 5],
+        },
+        {
+          type: "Box",
+          position: [0, 0, -6],
+          args: [5, 1, 5],
+        },
+        {
+          type: "Box",
+          position: [6, 0, -6],
+          args: [5, 1, 5],
+        },
+
+        { type: "Box", position: [0, 2, 9], args: [19, 5, 1] },
+        { type: "Box", position: [-9, 2, -6], args: [1, 5, 5] },
+        { type: "Box", position: [-9, 2, 0], args: [1, 5, 5] },
+        { type: "Box", position: [-9, 2, 6], args: [1, 5, 5] },
+      ],
+      ...props,
     };
   });
 
@@ -66,50 +127,93 @@ function Board({ onClick, reset, setReset, clearBoard }) {
     } else if (!reset && rotation !== 0) {
       api.rotation.set(0, 0, 0);
     }
-
-    // if (reset && position <= 15) {
-    //   setPosition((prev) => (prev += 1.513));
-    //   api.position.set(0, position, 0);
-    // }
-    // if (position >= 15 && reset) {
-    //   setReset(false);
-    // } else if (!reset && position > 0) {
-    //   api.position.set(0, position, 0);
-    //   setPosition((prev) => (prev -= 0.26));
-    // } else if (!reset && position !== 0) {
-    //   api.position.set(0, 0, 0);
-    // }
   });
+
+  console.log(boardRef.current);
 
   return (
     <group ref={boardRef}>
-      {/* <Wall position={[0, 2, -9]} />
-      <SmallWall position={[9, 2, -6]} />
-      <SmallWall position={[9, 2, -0]} />
-      <SmallWall position={[9, 2, 6]} /> */}
-      <Field id={0} onClick={onClick} player="" position={[-6, 0, 6]} />
-      <Field id={1} onClick={onClick} player="" position={[0, 0, 6]} />
-      <Field id={2} onClick={onClick} player="" position={[6, 0, 6]} />
-      {/* <Wall position={[0, 2, -3]} />
-      <SmallWall position={[3, 2, -6]} />
-      <SmallWall position={[3, 2, -0]} />
-      <SmallWall position={[3, 2, 6]} /> */}
+      <Block position={[0, 2, -9]} scale={[19, 5, 1]} />
+      <Block position={[9, 2, -6]} scale={[1, 5, 5]} />
+      <Block position={[9, 2, -0]} scale={[1, 5, 5]} />
+      <Block position={[9, 2, 6]} scale={[1, 5, 5]} />
+      <Block
+        id={0}
+        onClick={onClick}
+        player=""
+        position={[-6, 0, 6]}
+        scale={[5, 1, 5]}
+      />
+      <Block
+        id={1}
+        onClick={onClick}
+        player=""
+        position={[0, 0, 6]}
+        scale={[5, 1, 5]}
+      />
+      <Block
+        id={2}
+        onClick={onClick}
+        player=""
+        position={[6, 0, 6]}
+        scale={[5, 1, 5]}
+      />
+      <Block position={[0, 2, -3]} scale={[19, 5, 1]} />
+      <Block position={[3, 2, -6]} scale={[1, 5, 5]} />
+      <Block position={[3, 2, -0]} scale={[1, 5, 5]} />
+      <Block position={[3, 2, 6]} scale={[1, 5, 5]} />
 
-      <Field id={3} onClick={onClick} player="" position={[-6, 0, 0]} />
-      <Field id={4} onClick={onClick} player="" position={[0, 0, 0]} />
-      <Field id={5} onClick={onClick} player="" position={[6, 0, 0]} />
-      {/* <Wall position={[0, 2, 3]} />
-      <SmallWall position={[-3, 2, -6]} />
-      <SmallWall position={[-3, 2, -0]} />
-      <SmallWall position={[-3, 2, 6]} /> */}
+      <Block
+        id={3}
+        onClick={onClick}
+        player=""
+        position={[-6, 0, 0]}
+        scale={[5, 1, 5]}
+      />
+      <Block
+        id={4}
+        onClick={onClick}
+        player=""
+        position={[0, 0, 0]}
+        scale={[5, 1, 5]}
+      />
+      <Block
+        id={5}
+        onClick={onClick}
+        player=""
+        position={[6, 0, 0]}
+        scale={[5, 1, 5]}
+      />
+      <Block position={[0, 2, 3]} scale={[19, 5, 1]} />
+      <Block position={[-3, 2, -6]} scale={[1, 5, 5]} />
+      <Block position={[-3, 2, -0]} scale={[1, 5, 5]} />
+      <Block position={[-3, 2, 6]} scale={[1, 5, 5]} />
 
-      <Field id={6} onClick={onClick} player="" position={[-6, 0, -6]} />
-      <Field id={7} onClick={onClick} player="" position={[0, 0, -6]} />
-      <Field id={8} onClick={onClick} player="" position={[6, 0, -6]} />
-      {/* <Wall position={[0, 2, 9]} />
-      <SmallWall position={[-9, 2, -6]} />
-      <SmallWall position={[-9, 2, -0]} />
-      <SmallWall position={[-9, 2, 6]} /> */}
+      <Block
+        id={6}
+        onClick={onClick}
+        player=""
+        position={[-6, 0, -6]}
+        scale={[5, 1, 5]}
+      />
+      <Block
+        id={7}
+        onClick={onClick}
+        player=""
+        position={[0, 0, -6]}
+        scale={[5, 1, 5]}
+      />
+      <Block
+        id={8}
+        onClick={onClick}
+        player=""
+        position={[6, 0, -6]}
+        scale={[5, 1, 5]}
+      />
+      <Block position={[0, 2, 9]} scale={[19, 5, 1]} />
+      <Block position={[-9, 2, -6]} scale={[1, 5, 5]} />
+      <Block position={[-9, 2, -0]} scale={[1, 5, 5]} />
+      <Block position={[-9, 2, 6]} scale={[1, 5, 5]} />
     </group>
   );
 }
