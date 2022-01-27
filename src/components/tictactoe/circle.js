@@ -1,19 +1,18 @@
 import React from "react";
-import { useBox } from "@react-three/cannon";
-
+import { useSphere } from "@react-three/cannon";
 function Circle(props) {
   const [x, y, z] = props.position;
 
-  const [ref] = useBox(() => ({
-    args: [4, 4, 4],
+  const [ref] = useSphere(() => ({
+    args: [2.5, 64, 64],
     mass: 1,
-    position: [x, y, z],
-    rotation: [0.2 * Math.random(), 0, 0.1 * Math.random()],
+    position: [x + 0.5 * Math.random(), y + 0.3 * Math.random(), z],
+    // rotation: [0.2 * Math.random(), 0, 0.1 * Math.random()],
   }));
   return (
     <mesh castShadow ref={ref} {...props}>
-      <boxBufferGeometry args={[4, 4, 4]} />
-      <meshLambertMaterial color="yellow" />
+      <sphereGeometry args={[2.5, 64, 64]} />
+      <meshPhongMaterial color="white" />
     </mesh>
   );
 }

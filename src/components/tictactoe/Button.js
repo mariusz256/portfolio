@@ -1,14 +1,10 @@
-import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
+import React, { useRef, useLayoutEffect } from "react";
 import * as THREE from "three";
 import { extend, useLoader } from "@react-three/fiber";
 import { FontLoader } from "three/examples/jsm/loaders/FontLoader";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
 import boldUrl from "../../assets/fonts/bold.blob";
-import {
-  EffectComposer,
-  Bloom,
-  SelectiveBloom,
-} from "@react-three/postprocessing";
+
 import { useBox } from "@react-three/cannon";
 
 extend({ TextGeometry });
@@ -17,28 +13,22 @@ function Button({
   children,
   position,
   color = "#ba8c63",
-  size = 1.5,
-  lightRef,
+  size = 2.5,
   onClick,
-  won,
-  draw,
   ...props
 }) {
-  // const [hovered, setHover] = useState(false);
-
   const [ref] = useBox(() => ({
-    args: [5, 2, 1],
-
+    args: [10, 2, 1],
     mass: 16,
     position: position,
-    rotation: [0.3 * Math.random() - Math.PI / 2, 0, 0.1 * Math.random()],
+    rotation: [-Math.PI / 2, 0, 0],
   }));
 
   const font = useLoader(FontLoader, boldUrl);
   const config = {
     font,
     size: size,
-    height: 0.1,
+    height: 0.3,
     curveSegments: 25,
     bevelEnabled: true,
     bevelThickness: 0.1,
@@ -61,12 +51,12 @@ function Button({
 
   return (
     <group ref={ref}>
-      <mesh ref={textMesh} args={[5, 2, 1]}>
+      <mesh ref={textMesh} args={[10, 2, 1]}>
         <textGeometry args={[children, config]} />
         <meshStandardMaterial color={color} />
       </mesh>
       <mesh ref={boxMesh} onClick={onClick}>
-        <boxGeometry args={[5, 2, 1]} />
+        <boxGeometry args={[10, 2, 1]} />
         <meshStandardMaterial transparent opacity={0} />
       </mesh>
     </group>
