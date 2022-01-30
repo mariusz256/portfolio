@@ -13,15 +13,18 @@ function Button({
   children,
   position,
   color = "#ba8c63",
-  size = 2.5,
+  size = 2,
+  lightRef,
   onClick,
+  won,
+  draw,
   ...props
 }) {
   const [ref] = useBox(() => ({
-    args: [10, 2, 1],
-    mass: 16,
+    args: [10, 4, 1],
+    mass: 5,
     position: position,
-    rotation: [-Math.PI / 2, 0, 0],
+    rotation: [-Math.PI / 2, 0, 0.1],
   }));
 
   const font = useLoader(FontLoader, boldUrl);
@@ -38,26 +41,20 @@ function Button({
   };
 
   const textMesh = useRef();
-  const boxMesh = useRef();
 
   useLayoutEffect(() => {
     const sizeText = new THREE.Vector3();
     textMesh.current.geometry.computeBoundingBox();
     textMesh.current.geometry.boundingBox.getSize(sizeText);
-    boxMesh.current.geometry.boundingBox = sizeText;
     textMesh.current.position.y = -sizeText.y / 2;
     textMesh.current.position.x = -sizeText.x / 2;
   }, []);
 
   return (
-    <group ref={ref}>
-      <mesh ref={textMesh} args={[10, 2, 1]}>
+    <group ref={ref} onClick={onClick}>
+      <mesh ref={textMesh} args={[14, 4, 1]}>
         <textGeometry args={[children, config]} />
         <meshStandardMaterial color={color} />
-      </mesh>
-      <mesh ref={boxMesh} onClick={onClick}>
-        <boxGeometry args={[10, 2, 1]} />
-        <meshStandardMaterial transparent opacity={0} />
       </mesh>
     </group>
   );

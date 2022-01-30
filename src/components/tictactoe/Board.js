@@ -1,6 +1,9 @@
-import React, { forwardRef, useEffect } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import { useCompoundBody } from "@react-three/cannon";
 import * as THREE from "three";
+import FlyingPoint from "./FlyingPoint";
+
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const Block = forwardRef(
   (
@@ -24,10 +27,18 @@ const Block = forwardRef(
   }
 );
 
-function Board({ updateBoard, reset, setReset, clearBoard, ...props }) {
-  useEffect(() => {
-    const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+function Board({
+  updateBoard,
+  board,
+  reset,
+  setReset,
+  clearBoard,
+  player,
+  ...props
+}) {
+  const [hover, setHover] = useState(false);
 
+  useEffect(() => {
     if (reset) {
       api.rotation.subscribe((r) =>
         api.rotation.set(0, 0, THREE.MathUtils.lerp(r[2], Math.PI, 0.05))
@@ -52,6 +63,15 @@ function Board({ updateBoard, reset, setReset, clearBoard, ...props }) {
     }
     return () => {};
   }, [reset]);
+
+  const handleHover = (e) => {
+    setHover(e.object);
+  };
+
+  const getHoverObjPos = (obj) => {
+    const { x, y, z } = obj.position;
+    return [x, y + 12, z];
+  };
 
   const [boardRef, api] = useCompoundBody(() => {
     return {
@@ -128,89 +148,139 @@ function Board({ updateBoard, reset, setReset, clearBoard, ...props }) {
   });
 
   return (
-    <group ref={boardRef} castShadow>
-      <Block position={[0, 2, -9]} scale={[18.5, 5.5, 0.5]} />
-      <Block position={[9, 2, -6]} scale={[0.5, 5.5, 5.5]} />
-      <Block position={[9, 2, -0]} scale={[0.5, 5.5, 5.5]} />
-      <Block position={[9, 2, 6]} scale={[0.5, 5.5, 5.5]} />
-      <Block
-        id={0}
-        onClick={updateBoard}
-        player=""
-        position={[-6, 0, 6]}
-        scale={[5.5, 1.5, 5.5]}
-      />
-      <Block
-        id={1}
-        onClick={updateBoard}
-        player=""
-        position={[0, 0, 6]}
-        scale={[5.5, 1.5, 5.5]}
-      />
-      <Block
-        id={2}
-        onClick={updateBoard}
-        player=""
-        position={[6, 0, 6]}
-        scale={[5.5, 1.5, 5.5]}
-      />
-      <Block position={[0, 2, -3]} scale={[18.5, 5.5, 0.5]} />
-      <Block position={[3, 2, -6]} scale={[0.5, 5.5, 5.5]} />
-      <Block position={[3, 2, -0]} scale={[0.5, 5.5, 5.5]} />
-      <Block position={[3, 2, 6]} scale={[0.5, 5.5, 5.5]} />
+    <>
+      <group ref={boardRef} castShadow receiveShadow>
+        <Block position={[0, 2, -9]} scale={[18.5, 5.5, 0.5]} />
+        <Block position={[9, 2, -6]} scale={[0.5, 5.5, 5.5]} />
+        <Block position={[9, 2, -0]} scale={[0.5, 5.5, 5.5]} />
+        <Block position={[9, 2, 6]} scale={[0.5, 5.5, 5.5]} />
+        <Block
+          id={0}
+          onPointerOver={handleHover}
+          onClick={(e) => {
+            updateBoard(e);
+            setHover(false);
+          }}
+          // onPointerOut={(e) => setHover(false)}
+          player=""
+          position={[-6, 0, 6]}
+          scale={[5.5, 1.5, 5.5]}
+        />
+        <Block
+          id={1}
+          onPointerOver={handleHover}
+          onClick={(e) => {
+            updateBoard(e);
+            setHover(false);
+          }}
+          // onPointerOut={(e) => setHover(false)}
+          player=""
+          position={[0, 0, 6]}
+          scale={[5.5, 1.5, 5.5]}
+        />
+        <Block
+          id={2}
+          onPointerOver={handleHover}
+          onClick={(e) => {
+            updateBoard(e);
+            setHover(false);
+          }}
+          // onPointerOut={(e) => setHover(false)}
+          player=""
+          position={[6, 0, 6]}
+          scale={[5.5, 1.5, 5.5]}
+        />
+        <Block position={[0, 2, -3]} scale={[18.5, 5.5, 0.5]} />
+        <Block position={[3, 2, -6]} scale={[0.5, 5.5, 5.5]} />
+        <Block position={[3, 2, -0]} scale={[0.5, 5.5, 5.5]} />
+        <Block position={[3, 2, 6]} scale={[0.5, 5.5, 5.5]} />
 
-      <Block
-        id={3}
-        onClick={updateBoard}
-        player=""
-        position={[-6, 0, 0]}
-        scale={[5.5, 1.5, 5.5]}
-      />
-      <Block
-        id={4}
-        onClick={updateBoard}
-        player=""
-        position={[0, 0, 0]}
-        scale={[5.5, 1.5, 5.5]}
-      />
-      <Block
-        id={5}
-        onClick={updateBoard}
-        player=""
-        position={[6, 0, 0]}
-        scale={[5.5, 1.5, 5.5]}
-      />
-      <Block position={[0, 2, 3]} scale={[18.5, 5.5, 0.5]} />
-      <Block position={[-3, 2, -6]} scale={[0.5, 5.5, 5.5]} />
-      <Block position={[-3, 2, -0]} scale={[0.5, 5.5, 5.5]} />
-      <Block position={[-3, 2, 6]} scale={[0.5, 5.5, 5.5]} />
+        <Block
+          id={3}
+          onPointerOver={handleHover}
+          onClick={(e) => {
+            updateBoard(e);
+            setHover(false);
+          }}
+          // onPointerOut={(e) => setHover(false)}
+          player=""
+          position={[-6, 0, 0]}
+          scale={[5.5, 1.5, 5.5]}
+        />
+        <Block
+          id={4}
+          onPointerOver={handleHover}
+          onClick={(e) => {
+            updateBoard(e);
+            setHover(false);
+          }}
+          // onPointerOut={(e) => setHover(false)}
+          player=""
+          position={[0, 0, 0]}
+          scale={[5.5, 1.5, 5.5]}
+        />
+        <Block
+          id={5}
+          onPointerOver={handleHover}
+          onClick={(e) => {
+            updateBoard(e);
+            setHover(false);
+          }}
+          // onPointerOut={(e) => setHover(false)}
+          player=""
+          position={[6, 0, 0]}
+          scale={[5.5, 1.5, 5.5]}
+        />
+        <Block position={[0, 2, 3]} scale={[18.5, 5.5, 0.5]} />
+        <Block position={[-3, 2, -6]} scale={[0.5, 5.5, 5.5]} />
+        <Block position={[-3, 2, -0]} scale={[0.5, 5.5, 5.5]} />
+        <Block position={[-3, 2, 6]} scale={[0.5, 5.5, 5.5]} />
 
-      <Block
-        id={6}
-        onClick={updateBoard}
-        player=""
-        position={[-6, 0, -6]}
-        scale={[5.5, 1.5, 5.5]}
-      />
-      <Block
-        id={7}
-        onClick={updateBoard}
-        player=""
-        position={[0, 0, -6]}
-        scale={[5.5, 1.5, 5.5]}
-      />
-      <Block
-        id={8}
-        onClick={updateBoard}
-        player=""
-        position={[6, 0, -6]}
-        scale={[5.5, 1.5, 5.5]}
-      />
-      <Block position={[0, 2, 9]} scale={[18.5, 5.5, 0.5]} />
-      <Block position={[-9, 2, -6]} scale={[0.5, 5.5, 5.5]} />
-      <Block position={[-9, 2, -0]} scale={[0.5, 5.5, 5.5]} />
-      <Block position={[-9, 2, 6]} scale={[0.5, 5.5, 5.5]} />
-    </group>
+        <Block
+          id={6}
+          onPointerOver={handleHover}
+          onClick={(e) => {
+            updateBoard(e);
+            setHover(false);
+          }}
+          // onPointerOut={(e) => setHover(false)}
+          player=""
+          position={[-6, 0, -6]}
+          scale={[5.5, 1.5, 5.5]}
+        />
+        <Block
+          id={7}
+          onPointerOver={handleHover}
+          onClick={(e) => {
+            updateBoard(e);
+            setHover(false);
+          }}
+          // onPointerOut={(e) => setHover(false)}
+          player=""
+          position={[0, 0, -6]}
+          scale={[5.5, 1.5, 5.5]}
+        />
+        <Block
+          id={8}
+          onPointerOver={handleHover}
+          onClick={(e) => {
+            updateBoard(e);
+            setHover(false);
+          }}
+          // onPointerOut={(e) => setHover(false)}
+          player=""
+          position={[6, 0, -6]}
+          scale={[5.5, 1.5, 5.5]}
+        />
+        <Block position={[0, 2, 9]} scale={[18.5, 5.5, 0.5]} />
+        <Block position={[-9, 2, -6]} scale={[0.5, 5.5, 5.5]} />
+        <Block position={[-9, 2, -0]} scale={[0.5, 5.5, 5.5]} />
+        <Block position={[-9, 2, 6]} scale={[0.5, 5.5, 5.5]} />
+      </group>
+      {hover && !board[hover?.boardID] && (
+        <FlyingPoint player={player} position={getHoverObjPos(hover)} />
+      )}
+    </>
   );
 }
 

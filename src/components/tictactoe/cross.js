@@ -1,13 +1,13 @@
 import React from "react";
 import { useBox } from "@react-three/cannon";
 
-function Cross(props) {
+function Cross({ mass = 1, ...props }) {
   const [x, y, z] = props.position;
 
   const [ref] = useBox(() => ({
     args: [4, 4, 4],
     castShadow: true,
-    mass: 1,
+    mass: mass,
     position: [x, y, z],
     rotation: [0.3 * Math.random(), 0, 0.1 * Math.random()],
   }));

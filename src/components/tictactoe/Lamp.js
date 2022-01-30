@@ -8,11 +8,11 @@ function Lamp(props) {
       penumbra={1}
       radiusTop={1}
       radiusBottom={110}
-      distance={120}
-      angle={0.75}
-      attenuation={40}
+      distance={1000}
+      angle={0.85}
+      attenuation={140}
       anglePower={10}
-      intensity={0.85}
+      intensity={0.55}
       opacity={0.8}
       {...props}
     />

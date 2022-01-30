@@ -8,6 +8,7 @@ import { Physics } from "@react-three/cannon";
 import Board from "./Board";
 import Plane from "./Plane";
 import Lamp from "./Lamp";
+import { OrbitControls } from "@react-three/drei";
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -26,7 +27,7 @@ const CIRCLE = "circle";
 const CROSS = "cross";
 
 function Game() {
-  const [player, setPlayer] = useState("circle");
+  const [player, setPlayer] = useState(CIRCLE);
   const [board, setBoard] = useState(new Array(9));
   const [won, setWon] = useState(false);
   const [draw, setDraw] = useState(false);
@@ -83,18 +84,19 @@ function Game() {
     <div className="game">
       <div className="game__board">
         <Canvas camera={{ fov: 50, position: [11, 40, 22] }}>
-          {/* <OrbitControls
+          <OrbitControls
             enablePan={true}
             enableZoom={true}
             enableRotate={true}
-          /> */}
-          <Lamp position={[5, 35, 10]} />
+          />
           <Physics gravity={[1, -50, 0]}>
             <Board
               updateBoard={updateBoard}
               reset={startReset}
+              player={player}
               setReset={setReset}
               clearBoard={reset}
+              board={board}
             />
             {renderPlayer()}
             <Plane position={[0, -10, 0]} />
@@ -110,6 +112,7 @@ function Game() {
               )}
             </Suspense>
           </Physics>
+          <Lamp position={[7, 43, 14]} />
         </Canvas>
       </div>
     </div>
