@@ -38,6 +38,7 @@ function Board({
 }) {
   const [hover, setHover] = useState(false);
 
+  // animation on reset
   useEffect(() => {
     if (reset) {
       api.rotation.subscribe((r) =>
@@ -64,13 +65,14 @@ function Board({
     return () => {};
   }, [reset]);
 
+  // hover field in board
   const handleHover = (e) => {
     setHover(e.object);
   };
 
   const getHoverObjPos = (obj) => {
     const { x, y, z } = obj.position;
-    return [x, y + 12, z];
+    return [x, y, z];
   };
 
   const [boardRef, api] = useCompoundBody(() => {

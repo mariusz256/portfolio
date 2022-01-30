@@ -5,7 +5,7 @@ function FlyingPoint({ position, player, color = 0xfff1ef }) {
   const ref = useRef();
 
   useFrame(({ clock }) => {
-    ref.current.position.y = Math.sin(clock.getElapsedTime()) + 2.5;
+    ref.current.position.y = Math.sin(clock.getElapsedTime()) + 3.5;
   });
 
   return (
