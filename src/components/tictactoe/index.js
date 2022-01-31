@@ -9,6 +9,8 @@ import Board from "./Board";
 import Plane from "./Plane";
 import Lamp from "./Lamp";
 import { OrbitControls } from "@react-three/drei";
+import Winner from "./Winner";
+import Draw from "./Draw";
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -66,7 +68,7 @@ function Game() {
     checkDraw();
     setAnimation(true);
     setPlayer((prev) => (prev === CIRCLE ? CROSS : CIRCLE));
-    delay(500).then(() => setAnimation(false));
+    delay(300).then(() => setAnimation(false));
   };
 
   const renderPlayer = () => {
@@ -84,12 +86,12 @@ function Game() {
     <div className="game">
       <div className="game__board">
         <Canvas camera={{ fov: 50, position: [11, 40, 22] }}>
-          <OrbitControls
+          {/* <OrbitControls
             enablePan={true}
             enableZoom={true}
             enableRotate={true}
-          />
-          <Physics gravity={[1, -50, 0]}>
+          /> */}
+          <Physics gravity={[0, -50, 0]}>
             <Board
               updateBoard={updateBoard}
               reset={startReset}
@@ -97,19 +99,26 @@ function Game() {
               setReset={setReset}
               clearBoard={reset}
               board={board}
+              gameOver={won || draw}
             />
             {renderPlayer()}
             <Plane position={[0, -10, 0]} />
-            <Suspense fallback={null}>
+            <Suspense>
               {(won || draw) && (
                 <Button
                   onClick={() => {
                     setReset(true);
                   }}
-                  position={[0, 35, -2.5]}
+                  mass={10}
+                  position={[20, 10, -2.5]}
                   children={"RESET"}
                 />
               )}
+              <Circle position={[200, 200, 300]} args={[4, 4, 4]} mass={0} />
+              <Cross position={[200, 200, 300]} args={[4, 4, 4]} mass={0} />
+
+              {won && <Winner position={[-40, 40, 10]} player={won} />}
+              {draw && <Draw position={[-40, 40, 10]} draw={draw} />}
             </Suspense>
           </Physics>
           <Lamp position={[7, 43, 14]} />

@@ -15,8 +15,8 @@ function Plane(props) {
         color="#828390"
         blur={[400, 400]}
         resolution={1024}
-        mixBlur={1}
-        mixStrength={3}
+        mixBlur={0}
+        mixStrength={1}
         depthScale={1}
         minDepthThreshold={0.85}
         metalness={0}

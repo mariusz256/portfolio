@@ -1,7 +1,10 @@
 import React, { forwardRef, useEffect, useState } from "react";
 import { useCompoundBody } from "@react-three/cannon";
 import * as THREE from "three";
+import { TextureLoader } from "three/src/loaders/TextureLoader";
+
 import FlyingPoint from "./FlyingPoint";
+import { useLoader } from "@react-three/fiber";
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -18,10 +21,12 @@ const Block = forwardRef(
     },
     ref
   ) => {
+    const woodTexture = useLoader(TextureLoader, "board.jpg");
+
     return (
       <mesh ref={ref} receiveShadow castShadow boardID={id} {...props}>
         <boxGeometry args={args} />
-        <meshStandardMaterial color={color} />
+        <meshStandardMaterial map={woodTexture} color={color} />
       </mesh>
     );
   }
@@ -34,6 +39,7 @@ function Board({
   setReset,
   clearBoard,
   player,
+  gameOver,
   ...props
 }) {
   const [hover, setHover] = useState(false);
@@ -163,7 +169,6 @@ function Board({
             updateBoard(e);
             setHover(false);
           }}
-          // onPointerOut={(e) => setHover(false)}
           player=""
           position={[-6, 0, 6]}
           scale={[5.5, 1.5, 5.5]}
@@ -175,7 +180,6 @@ function Board({
             updateBoard(e);
             setHover(false);
           }}
-          // onPointerOut={(e) => setHover(false)}
           player=""
           position={[0, 0, 6]}
           scale={[5.5, 1.5, 5.5]}
@@ -187,7 +191,6 @@ function Board({
             updateBoard(e);
             setHover(false);
           }}
-          // onPointerOut={(e) => setHover(false)}
           player=""
           position={[6, 0, 6]}
           scale={[5.5, 1.5, 5.5]}
@@ -204,7 +207,6 @@ function Board({
             updateBoard(e);
             setHover(false);
           }}
-          // onPointerOut={(e) => setHover(false)}
           player=""
           position={[-6, 0, 0]}
           scale={[5.5, 1.5, 5.5]}
@@ -216,7 +218,6 @@ function Board({
             updateBoard(e);
             setHover(false);
           }}
-          // onPointerOut={(e) => setHover(false)}
           player=""
           position={[0, 0, 0]}
           scale={[5.5, 1.5, 5.5]}
@@ -228,7 +229,6 @@ function Board({
             updateBoard(e);
             setHover(false);
           }}
-          // onPointerOut={(e) => setHover(false)}
           player=""
           position={[6, 0, 0]}
           scale={[5.5, 1.5, 5.5]}
@@ -245,7 +245,6 @@ function Board({
             updateBoard(e);
             setHover(false);
           }}
-          // onPointerOut={(e) => setHover(false)}
           player=""
           position={[-6, 0, -6]}
           scale={[5.5, 1.5, 5.5]}
@@ -257,7 +256,6 @@ function Board({
             updateBoard(e);
             setHover(false);
           }}
-          // onPointerOut={(e) => setHover(false)}
           player=""
           position={[0, 0, -6]}
           scale={[5.5, 1.5, 5.5]}
@@ -269,7 +267,6 @@ function Board({
             updateBoard(e);
             setHover(false);
           }}
-          // onPointerOut={(e) => setHover(false)}
           player=""
           position={[6, 0, -6]}
           scale={[5.5, 1.5, 5.5]}
@@ -279,7 +276,7 @@ function Board({
         <Block position={[-9, 2, -0]} scale={[0.5, 5.5, 5.5]} />
         <Block position={[-9, 2, 6]} scale={[0.5, 5.5, 5.5]} />
       </group>
-      {hover && !board[hover?.boardID] && (
+      {hover && !gameOver && !board[hover?.boardID] && (
         <FlyingPoint player={player} position={getHoverObjPos(hover)} />
       )}
     </>

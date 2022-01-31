@@ -10,8 +10,12 @@ function FlyingPoint({ position, player, color = 0xfff1ef }) {
 
   return (
     <group ref={ref} position={position}>
-      {player === "circle" ? <Sphere color={color} /> : <Cube color={"#000"} />}
-      <pointLight intensity={0.1} />
+      {player === "circle" ? (
+        <Sphere color={color} />
+      ) : (
+        <Cube color={"#08050D"} />
+      )}
+      {/* <pointLight intensity={0.1} /> */}
     </group>
   );
 }
