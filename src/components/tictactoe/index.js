@@ -1,16 +1,15 @@
 import "./game.scss";
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useCallback, useMemo, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import Circle from "./circle";
 import Cross from "./cross";
-import Button from "./Button";
 import { Physics } from "@react-three/cannon";
-import Board from "./Board";
+import { MemoizedBoard } from "./Board";
 import Plane from "./Plane";
 import Lamp from "./Lamp";
 import { OrbitControls } from "@react-three/drei";
-import Winner from "./Winner";
-import Draw from "./Draw";
+
+import { Cursor } from "./helpers/Drag";
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -29,101 +28,29 @@ const CIRCLE = "circle";
 const CROSS = "cross";
 
 function Game() {
-  const [player, setPlayer] = useState(CIRCLE);
-  const [board, setBoard] = useState(new Array(9));
-  const [won, setWon] = useState(false);
-  const [draw, setDraw] = useState(false);
-  const [startReset, setReset] = useState(false);
-  const [animation, setAnimation] = useState(false);
-
-  const chceckWin = (player) => {
-    const playerMove = board
-      .filter((el) => el.player === player)
-      .map((el) => el.boardID);
-    const won = WIN_COMBINATIONS.filter((comb) =>
-      comb.every((el) => playerMove.includes(el))
-    );
-    setWon(() => (won.length > 0 ? player : false));
-  };
-
-  const checkDraw = () => {
-    setDraw(!board.includes(undefined));
-  };
-
-  const reset = () => {
-    setBoard(new Array(9));
-    setWon(false);
-    setDraw(false);
-  };
-
-  const updateBoard = (e) => {
-    if (board[e.object.boardID] || won || draw || startReset || animation)
-      return;
-    e.object.player = player;
-    setBoard((prev) => {
-      prev[e.object.boardID] = e.object;
-      return prev;
-    });
-    chceckWin(player);
-    checkDraw();
-    setAnimation(true);
-    setPlayer((prev) => (prev === CIRCLE ? CROSS : CIRCLE));
-    delay(300).then(() => setAnimation(false));
-  };
-
-  const renderPlayer = () => {
-    return board.map((el, i) => {
-      const { x, y, z } = el.position;
-      if (el.player === CIRCLE)
-        return <Circle key={i} position={[x, y + 25, z]} args={[4, 4, 4]} />;
-      if (el.player === CROSS)
-        return <Cross key={i} position={[x, y + 25, z]} args={[4, 4, 4]} />;
-      return null;
-    });
-  };
+  const [state, setState] = useState(0);
 
   return (
     <div className="game">
       <div className="game__board">
-        <Canvas camera={{ fov: 50, position: [11, 40, 22] }}>
-          {/* <OrbitControls
-            enablePan={true}
-            enableZoom={true}
-            enableRotate={true}
-          /> */}
+        <Canvas
+          dpr={[1, 2]}
+          shadows
+          camera={{ position: [-40, 40, 40], fov: 25, near: 1, far: 100 }}
+        >
+          {/* <OrbitControls /> */}
+          <Lamp position={[0, 20, 0]} />
           <Physics gravity={[0, -50, 0]}>
-            <Board
-              updateBoard={updateBoard}
-              reset={startReset}
-              player={player}
-              setReset={setReset}
-              clearBoard={reset}
-              board={board}
-              gameOver={won || draw}
-            />
-            {renderPlayer()}
-            <Plane position={[0, -10, 0]} />
-            <Suspense>
-              {(won || draw) && (
-                <Button
-                  onClick={() => {
-                    setReset(true);
-                  }}
-                  mass={10}
-                  position={[20, 10, -2.5]}
-                  children={"RESET"}
-                />
-              )}
-              <Circle position={[200, 200, 300]} args={[4, 4, 4]} mass={0} />
-              <Cross position={[200, 200, 300]} args={[4, 4, 4]} mass={0} />
+            <MemoizedBoard />
+            <Plane />
+            <Circle position={[0, 2, 12]} />
 
-              {won && <Winner position={[-40, 40, 10]} player={won} />}
-              {draw && <Draw position={[-40, 40, 10]} draw={draw} />}
-            </Suspense>
+            <Cross position={[0, 2, -12]} />
+            <Cursor />
           </Physics>
-          <Lamp position={[7, 43, 14]} />
         </Canvas>
       </div>
+      <button onClick={() => setState((s) => s + 1)}>Add</button>
     </div>
   );
 }
