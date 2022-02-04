@@ -5,15 +5,15 @@ function Lamp(props) {
   return (
     <SpotLight
       castShadow
-      penumbra={1}
+      penumbra={0.5}
       radiusTop={1}
-      radiusBottom={110}
+      radiusBottom={200}
       distance={1000}
-      angle={0.85}
-      attenuation={140}
-      anglePower={10}
+      angle={0.95}
+      attenuation={10}
+      anglePower={20}
       intensity={0.55}
-      opacity={0.8}
+      opacity={0.9}
       {...props}
     />
   );

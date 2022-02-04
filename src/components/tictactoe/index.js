@@ -1,17 +1,14 @@
 import "./game.scss";
-import React, { Suspense, useCallback, useMemo, useState } from "react";
+import React, { Suspense, useCallback, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import Circle from "./circle";
-import Cross from "./cross";
 import { Physics } from "@react-three/cannon";
 import { MemoizedBoard } from "./Board";
-import Plane from "./Plane";
 import Lamp from "./Lamp";
 import { OrbitControls } from "@react-three/drei";
 
 import { Cursor } from "./helpers/Drag";
-
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+import Pawns from "./pawns/Pawns";
+import Planes from "./planes/Planes";
 
 const WIN_COMBINATIONS = [
   [0, 1, 2],
@@ -28,7 +25,19 @@ const CIRCLE = "circle";
 const CROSS = "cross";
 
 function Game() {
-  const [state, setState] = useState(0);
+  const [game, setGame] = useState({
+    board: new Array(9),
+  });
+
+  const onContact = useCallback((e, player) => {
+    if (Object.keys(e.body.userData).length === 0) return;
+    const id = e.body.userData.id;
+    return setGame((state) => {
+      const newState = { ...state };
+      newState.board[id] = player;
+      return newState;
+    });
+  }, []);
 
   return (
     <div className="game">
@@ -38,19 +47,19 @@ function Game() {
           shadows
           camera={{ position: [-40, 40, 40], fov: 25, near: 1, far: 100 }}
         >
-          {/* <OrbitControls /> */}
-          <Lamp position={[0, 20, 0]} />
-          <Physics gravity={[0, -50, 0]}>
-            <MemoizedBoard />
-            <Plane />
-            <Circle position={[0, 2, 12]} />
-
-            <Cross position={[0, 2, -12]} />
-            <Cursor />
-          </Physics>
+          <Suspense>
+            {/* <OrbitControls /> */}
+            <Lamp position={[0, 20, 0]} />
+            <ambientLight intensity={0.2} />
+            <Physics gravity={[0, -50, 0]}>
+              <MemoizedBoard />
+              <Planes />
+              <Pawns onContact={onContact} />
+              <Cursor />
+            </Physics>
+          </Suspense>
         </Canvas>
       </div>
-      <button onClick={() => setState((s) => s + 1)}>Add</button>
     </div>
   );
 }
